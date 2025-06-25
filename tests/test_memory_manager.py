@@ -42,7 +42,7 @@ def test_split_block_partial_allocation(memory_manager, process_small):
     assert memory_manager.blocks[1].is_free is True
 
 
-def test_split_block_exact_fit(memory_manager, process_small):
+def test_split_block_exact_fit(memory_manager):
     # Test that if there's no leftover space, the block is not split
 
     # Create a process that requires the exact amount of memory as total number
