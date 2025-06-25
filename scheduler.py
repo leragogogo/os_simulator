@@ -40,12 +40,30 @@ class Scheduler:
             # Get the next process in the queue
             process = self.ready_queue.popleft()
 
+            # Record the execution order (testing/visualization)
+            self.execution_log.append({
+                "time": self.time,
+                "process_id": process.process_id,
+                "memory_state": [(block.start, block.size, block.is_free, block.process_id) for block in
+                                 self.memory_manager.blocks]
+            })
+
             # If this is the first time the process runs, record its start time
             if process.start_time is None:
                 process.start_time = self.time
 
             # Execute the whole process
-            self.time += process.burst_time
+            #self.time += process.burst_time
+            for _ in range(process.burst_time):
+                self.execution_log.append({
+                    "time": self.time,
+                    "process_id": process.process_id,
+                    "memory_state": [
+                        (block.start, block.size, block.is_free, block.process_id)
+                        for block in self.memory_manager.blocks
+                    ]
+                })
+                self.time += 1
             process.completion_time = self.time
 
             # Calculate the time metrics
@@ -65,7 +83,12 @@ class Scheduler:
             process = self.ready_queue.popleft()
 
             # Record the execution order (testing/visualization)
-            self.execution_log.append(process.process_id)
+            self.execution_log.append({
+                "time": self.time,
+                "process_id": process.process_id,
+                "memory_state": [(block.start, block.size, block.is_free, block.process_id) for block in
+                                 self.memory_manager.blocks]
+            })
 
             # If this is the first time the process runs, record its start time
             if process.start_time is None:
@@ -73,7 +96,17 @@ class Scheduler:
 
             # Determine how much time the process can run in this round
             time_slice = min(self.time_quantum, process.remaining_time)
-            self.time += time_slice
+            #self.time += time_slice
+            for _ in range(time_slice):
+                self.execution_log.append({
+                    "time": self.time,
+                    "process_id": process.process_id,
+                    "memory_state": [
+                        (block.start, block.size, block.is_free, block.process_id)
+                        for block in self.memory_manager.blocks
+                    ]
+                })
+                self.time += 1
             process.remaining_time -= time_slice
 
             # Process is finished -> calculate metrics, deallocate memory and mark process as completed

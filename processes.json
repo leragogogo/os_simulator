@@ -1,0 +1,22 @@
+{
+  "processes": [
+    {
+      "process_id": 1,
+      "arrival_time": 0,
+      "burst_time": 10,
+      "memory_required": 150
+    },
+    {
+      "process_id": 2,
+      "arrival_time": 2,
+      "burst_time": 4,
+      "memory_required": 150
+    },
+    {
+      "process_id": 3,
+      "arrival_time": 4,
+      "burst_time": 6,
+      "memory_required": 300
+    }
+  ]
+}
