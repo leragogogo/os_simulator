@@ -54,13 +54,10 @@ def run_simulation():
     # Load processes
     processes = load_processes_from_file(args.file)
 
-    for p in processes:
-        scheduler.add_process(p)
-
-    scheduler.run()
+    scheduler.run(processes)
 
     # Visualization
-    plot_gantt(scheduler.execution_log, scheduler.get_stats())
+    plot_gantt(scheduler.execution_log, scheduler.get_stats(), scheduler.get_rejected_processes())
     plot_memory_timeline(scheduler.execution_log)
 
 

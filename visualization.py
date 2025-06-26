@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 from collections import defaultdict
 
-def plot_gantt(execution_log, stats):
+
+def plot_gantt(execution_log, stats, rejected_processes):
     """
     Plot a Gantt chart showing when each process is running,
     and append summary statistics below the chart.
@@ -51,8 +52,13 @@ def plot_gantt(execution_log, stats):
         stat_text = "\n".join([f"{k}: {v:.2f}" for k, v in stats.items()])
         fig.text(0.1, 0.02, "Summary Stats:\n" + stat_text, fontsize=10, ha="left")
 
-    plt.show()
+    # Add rejected processes below if any
+    if rejected_processes:
+        fig.text(0.99, 0.02, "Rejected_processes:\n" + rejected_processes, fontsize=10, ha="right")
 
+    # Save as png
+    plt.savefig("charts/processes.png")
+    plt.close()
 
 
 def plot_memory_timeline(execution_log):
@@ -81,4 +87,7 @@ def plot_memory_timeline(execution_log):
     ax.set_ylabel("Time")
     plt.title("Memory Usage Over Time")
     plt.tight_layout()
-    plt.show()
+
+    # Save as png
+    plt.savefig("charts/memory.png")
+    plt.close()

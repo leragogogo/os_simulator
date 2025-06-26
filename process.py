@@ -9,3 +9,6 @@ class Process:
         self.completion_time = None
         self.waiting_time = 0
         self.turnaround_time = 0  # Total time from arrival to completion: completion_time - arrival_time
+
+    def __str__(self):
+        return f"PID: {self.process_id} required memory: {self.memory_required}"

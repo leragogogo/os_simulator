@@ -35,7 +35,7 @@ def process_c():
 
 @pytest.fixture
 def process_large():
-    return Process(process_id=3, arrival_time=4, burst_time=6, memory_required=900)
+    return Process(process_id=3, arrival_time=0, burst_time=6, memory_required=1500)
 
 
 def test_fcfs_handles_memory_allocation(scheduler, memory_manager, process_a):
@@ -49,8 +49,8 @@ def test_fcfs_handles_memory_allocation(scheduler, memory_manager, process_a):
 
 def test_fcfs_handles_memory_deallocation(scheduler, memory_manager, process_a):
     # Test that the scheduler deallocate memory after runs the processes
-    scheduler.add_process(process_a)
-    scheduler.run()
+
+    scheduler.run([process_a])
 
     allocated = any(block.process_id == process_a.process_id for block in memory_manager.blocks)
     assert allocated is False, f"Memory must be deallocated"
@@ -59,12 +59,7 @@ def test_fcfs_handles_memory_deallocation(scheduler, memory_manager, process_a):
 def test_fcfs(scheduler, process_a, process_b, process_c):
     # Test the correctness of FCFS
 
-    # Add processes to queue
-    scheduler.add_process(process_a)
-    scheduler.add_process(process_b)
-    scheduler.add_process(process_c)
-
-    scheduler.run()
+    scheduler.run([process_a,process_b,process_c])
 
     assert len(scheduler.ready_queue) == 0, 'All processes must be executed'
     assert process_a.completion_time == 10, "Process A must be competed by 10"
@@ -73,29 +68,22 @@ def test_fcfs(scheduler, process_a, process_b, process_c):
 
 
 def test_round_robin(scheduler, process_a, process_b, process_c):
-    # Add processes to queue
-    scheduler.add_process(process_a)
-    scheduler.add_process(process_b)
-    scheduler.add_process(process_c)
+    # Test the correctness of Round Robin
 
     # Setup Scheduler to Round Robin algorithm
     scheduler.time_quantum = 4
     scheduler.algorithm = 'RR'
 
-    scheduler.run()
+    scheduler.run([process_a,process_b,process_c])
 
     assert len(scheduler.ready_queue) == 0, 'All processes must be executed'
-    assert process_a.completion_time == 20, "Process A must be competed by 20"
+    assert process_a.completion_time == 20, f"Process A must be competed by 20 {process_a.completion_time}"
     assert process_b.completion_time == 8, "Process B must be competed by 8"
     assert process_c.completion_time == 18, "Process C must be competed by 18"
 
 
-def test_rejects_process_when_memory_insufficient(scheduler, process_a, process_large):
-    # Test that the scheduler handles memory allocation failures
+def test_rejects_process_when_memory_insufficient(scheduler, process_large):
+    scheduler.run([process_large])
 
-    scheduler.add_process(process_a)
-    scheduler.add_process(process_large)  # Large memory requirement
-
-    scheduler.run()
-
-    assert process_large.completion_time is None, "Large process should not complete due to lack of memory"
+    assert process_large.completion_time is None
+    assert process_large in scheduler.rejected_processes
