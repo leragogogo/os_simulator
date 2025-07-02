@@ -29,7 +29,7 @@ docker run --rm -v $(pwd):/app os_simulator \
     --strategy first_fit
 ```
 
-Then the Gantt charts will be saved in charts folder.
+There will be no UI that appears, just process execution and memory allocation timelines saved as PNGs in the charts folder.
 
 ### 4. Results Example (RR and First Fit)
 
